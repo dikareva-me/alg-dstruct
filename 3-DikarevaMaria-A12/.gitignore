@@ -2,5 +2,6 @@
 Debug
 Release
 packages
+packages.config
 *.sln
 *.vcxproj*
