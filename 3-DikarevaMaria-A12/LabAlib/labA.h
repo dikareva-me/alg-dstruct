@@ -14,13 +14,13 @@ extern "C" {
 
     XOR_list* InitList(void);
 
-    XOR_list* AddToList(XOR_list* tail, char* str);
+    void AddToList(XOR_list** head, char* str);
 
     void Iteration(XOR_list** cur, XOR_list** prev);
 
     XOR_list* FindElement(XOR_list* head, XOR_list** prev, char* str);
 
-    void DeleteElement(XOR_list* cur, XOR_list* prev, XOR_list* next);
+    void DeleteElement(XOR_list* cur, XOR_list* prev);
 
     void DeleteElementKey(XOR_list* head, char* str);
 

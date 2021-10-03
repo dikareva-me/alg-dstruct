@@ -7,7 +7,8 @@
 #include <locale.h>
 
 
-XOR_list* XOR(XOR_list* x, XOR_list* y) {
+XOR_list* XOR(XOR_list* x, XOR_list* y)
+{
     return (XOR_list*)((uintptr_t)(x) ^ (uintptr_t)(y));
 }
 
@@ -21,7 +22,8 @@ XOR_list* InitList(void)
     return head;
 }
 
-XOR_list* AddToList(XOR_list* tail, char* str)
+//Adding elements at the head of the list now
+void AddToList(XOR_list** head, char* str)
 {
     XOR_list* tmp = (XOR_list*)malloc(sizeof(XOR_list));
     if (tmp == NULL)
@@ -31,12 +33,11 @@ XOR_list* AddToList(XOR_list* tail, char* str)
 
     tmp->str = str;
 
-    tmp->link = XOR(tail, NULL);
-    if (tail != NULL)
-        tail->link = XOR(tail->link, tmp);
+    tmp->link = *head;
+    if (head != NULL)
+        (*head)->link = XOR((*head)->link, tmp);
 
-
-    return tmp;
+    *head = tmp;
 }
 
 void Iteration(XOR_list** cur, XOR_list** prev)
@@ -51,7 +52,6 @@ XOR_list* FindElement(XOR_list* head, XOR_list** prev, char* str)
 {
     XOR_list* cur = head;
 
-
     while (cur != NULL)
     {
         if (cur->str == NULL)
@@ -59,19 +59,21 @@ XOR_list* FindElement(XOR_list* head, XOR_list** prev, char* str)
         else if (strcmp(cur->str, str) != 0)
             Iteration(&cur, prev);
         else break;
-       
     }
 
     return cur;
 }
 
-void DeleteElement(XOR_list* cur, XOR_list* prev, XOR_list* next)
+void DeleteElement(XOR_list* cur, XOR_list* prev)
 {
+    XOR_list* next;
     next = XOR(cur->link, prev);
+
     if (prev != NULL)
         prev->link = XOR(XOR(prev->link, cur), next);
     if (next != NULL)
         next->link = XOR(XOR(next->link, cur), prev);
+
     free(cur);
 }
 
@@ -79,14 +81,12 @@ void DeleteElementKey(XOR_list* head, char* str)
 {
     XOR_list* cur = head;
     XOR_list* prev = NULL;
-    XOR_list* next;
 
     cur = FindElement(cur, &prev, str);
 
     if (cur != NULL)
     {
-        next = XOR(prev, cur->link);
-        DeleteElement(cur, prev, next);
+        DeleteElement(cur, prev);
     }
 }
 
@@ -94,18 +94,13 @@ void DeleteElementAddress(XOR_list* head, XOR_list* ptr)
 {
     XOR_list* cur = head;
     XOR_list* prev = NULL;
-    XOR_list* next;
 
     while (cur != ptr)
     {
         Iteration(&cur, &prev);
     }
     if (cur != NULL)
-    {
-        next = XOR(cur->link, prev);
-        DeleteElement(cur, prev, next);
-    }
-
+        DeleteElement(cur, prev);
 }
 
 void DestroyList(XOR_list* head)
@@ -113,7 +108,7 @@ void DestroyList(XOR_list* head)
     XOR_list* cur;
     XOR_list* tmp;
 
-    cur = XOR(head->link, NULL);
+    cur = head->link;
 
     while (cur != NULL)
     {

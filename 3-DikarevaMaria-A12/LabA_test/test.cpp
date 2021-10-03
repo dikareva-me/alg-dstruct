@@ -8,320 +8,437 @@ TEST(init_list_test, InitList_returnNotNullptr)
 
 	head = InitList();
 
-	EXPECT_NE(head, nullptr);
+	EXPECT_TRUE(head);
 
 	DestroyList(head);
 }
 
-TEST(XOR_operation, XOR_1element_returnValidVal)
+TEST(XOR_operation, XOR_1elementAndZero_returnValidVal)
 {
-	XOR_list* one = (XOR_list*)malloc(sizeof(XOR_list));
+	XOR_list one;
 
-	one->link = XOR(one, NULL);
+	one.link = XOR(&one, NULL);
 
-	EXPECT_EQ(one->link, (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(NULL)));
+	EXPECT_EQ(one.link, &one);
 
-	free(one);
 }
 
-TEST(XOR_operation, XOR_2elements_returnValidVal)
+TEST(XOR_operation, XOR_1elementSquare_returnValidVal)
 {
-	XOR_list* one = (XOR_list*)malloc(sizeof(XOR_list));
-	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+	XOR_list one;
 	XOR_list* link;
-	link = XOR(one, two);
+	link = XOR(&one, &one);
 
-	EXPECT_EQ(link, (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(two)));
-
-	free(one);
-	free(two);
+	EXPECT_FALSE(link);
 }
 
+TEST(XOR_operation, XOR_2elementsCommutative_returnValidVal)
+{
+	XOR_list one;
+	XOR_list two;
+	XOR_list* link1, * link2;
+
+	link1 = XOR(&one, &two);
+	link2 = XOR(&two, &one);
+
+	EXPECT_EQ(link1, link2);
+}
+
+TEST(XOR_operation, XOR_3elementsAssociative_returnValidVal)
+{
+	XOR_list one;
+	XOR_list two;
+	XOR_list three;
+	XOR_list* link1, * link2;
+
+	link1 = XOR(&one, &two);
+	link2 = XOR(&two, &three);
+
+	EXPECT_EQ(XOR(link1, &three), XOR(link2, &one));
+
+}
 
 TEST(Add_Element_To_List_Test, AddToList_List1element_returnValidVal)
 {
-	XOR_list* list = InitList();
-	XOR_list* next;
+	XOR_list list;
+	XOR_list* head = &list;
+	list.link = NULL;
+	char* str = "A";
 
-	char* str = "first";
-	next = AddToList(list, str);
+	AddToList(&head, str);
 
-	EXPECT_STREQ((char*)(next->str), "first");
-	EXPECT_EQ((XOR_list*)((uintptr_t)(list->link) ^ (uintptr_t)(NULL)), next);
-
-	free(list);
-	free(next);
+	EXPECT_TRUE(head->link);
+	EXPECT_EQ(head->str, str);
 }
 
 TEST(Add_Element_To_List_Test, AddToList_List2elements_returnValidVal)
 {
-	XOR_list* list = InitList();
+	XOR_list list;
+	list.link = NULL;
+	XOR_list* head = &list;
 	XOR_list* one;
 	XOR_list* two;
-	char* str1 = "first";
-	char* str2 = "second";
+	char* str1 = "A";
+	char* str2 = "B";
 
-	one = AddToList(list, str1);
-	two = AddToList(one, str2);
+	AddToList(&head, str1);
+	AddToList(&head, str2);
 
-	EXPECT_STREQ((char*)(one->str), "first");
-	EXPECT_STREQ((char*)(two->str), "second");
-	EXPECT_EQ((XOR_list*)((uintptr_t)(list->link) ^ (uintptr_t)(NULL)), one);
-	EXPECT_EQ((XOR_list*)((uintptr_t)(one->link) ^ (uintptr_t)(list)), two);
-	EXPECT_EQ((XOR_list*)((uintptr_t)(one->link) ^ (uintptr_t)(two)), list);
-	EXPECT_EQ((XOR_list*)((uintptr_t)(two->link) ^ (uintptr_t)(NULL)), one);
+	one = list.link;
+	two = XOR(&list, one->link);
 
-	free(list);
-	free(one);
-	free(two);
+	EXPECT_STREQ(one->str, str1);
+	EXPECT_STREQ(two->str, str2);
+
+	EXPECT_TRUE(one);
+	EXPECT_TRUE(two);
 }
 
 TEST(Iteration_test, Iteration_list2ElementsIterFromHead_returnValidVal)
 {
-	XOR_list* one = InitList();
-	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+	XOR_list one;
+	XOR_list two;
 	XOR_list* before_head = NULL;
-	XOR_list* head = one;
+	XOR_list* head = &one;
 
-	one->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
-	two->link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(NULL));
+	one.link = &two;
+	two.link = &one;
 
-	Iteration(&one, &before_head);
+	Iteration(&head, &before_head);
 
-	EXPECT_EQ(two, one);
-	EXPECT_EQ(before_head, head);
-
-	free(one);
-	free(head);
+	EXPECT_EQ(head, &two);
+	EXPECT_EQ(before_head, &one);
 }
 
 TEST(Iteration_test, Iteration_list3ElementsMiddleIteration_returnValidVal)
 {
-	XOR_list* one = InitList();
-	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
-	XOR_list* three = (XOR_list*)malloc(sizeof(XOR_list));
-	XOR_list* previous_two = two;
-	XOR_list* head = one;
+	XOR_list one;
+	XOR_list two;
+	XOR_list three;
+	XOR_list* two_ptr = &two;
+	XOR_list* head = &one;
 
-	one->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
-	two->link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(three));
-	three->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
+	one.link = &two;
+	two.link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(&three));
+	three.link = &two;
 
-	Iteration(&two, &one);
+	Iteration(&two_ptr, &head);
 
-	EXPECT_EQ(two, three);
-	EXPECT_EQ(one, previous_two);
-
-	free(head);
-	free(one);
-	free(two);
+	EXPECT_EQ(two_ptr, &three);
+	EXPECT_EQ(head, &two);
 }
 
 TEST(Iteration_test, Iteration_list2ElementsIterFromLastElement_returnValidVal)
 {
-	XOR_list* one = InitList();
-	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
-	XOR_list* previous_two = two;
-	XOR_list* head = one;
+	XOR_list one;
+	XOR_list two;
+	XOR_list* two_ptr = &two;
+	XOR_list* head = &one;
 
-	one->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
-	two->link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(NULL));
+	one.link = &two;
+	two.link = &one;
 
-	Iteration(&two, &one);
+	Iteration(&two_ptr, &head);
 
-	EXPECT_EQ(two, nullptr);
-	EXPECT_EQ(previous_two, one);
-
-	free(one);
-	free(head);
+	EXPECT_FALSE(two_ptr);
+	EXPECT_EQ(head, &two);
 }
 
 TEST(Iteration_test, Iteration_EmptyList_returnnullprt)
 {
-	XOR_list* one = InitList();
+	XOR_list one;
+	one.link = NULL;
 	XOR_list* prev = NULL;
+	XOR_list* head = &one;
 
-	Iteration(&one, &prev);
+	Iteration(&head, &prev);
 
-	EXPECT_EQ(one, nullptr);
-
-	free(one);
+	EXPECT_FALSE(head);
 }
 
 TEST(FindElement_test, FindElement_Emptylist_returnnullptr)
 {
-	XOR_list* one = InitList();
-	one->str = NULL;
+	XOR_list one;
+	one.str = NULL;
+	one.link = NULL;
 
 	XOR_list* previous = NULL;
-	XOR_list* found;
+	XOR_list* found = NULL;
 
-	found = FindElement(one, &previous, "first");
+	found = FindElement(&one, &previous, "first");
 
-	EXPECT_EQ(found, nullptr);
-
-	free(one);
+	EXPECT_FALSE(found);
 }
 
 TEST(FindElement_test, FindElement_List2ElementsNoKeyElement_returnNullptr)
 {
-	XOR_list* one = InitList();
-	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+	XOR_list one;
+	XOR_list two;
 
-	one->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
-	one->str = "first";
-	two->link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(NULL));
-	two->str = "second";
+	one.link = &two;
+	one.str = "first";
+	two.link = &one;
+	two.str = "second";
 
 	XOR_list* previous = NULL;
 	XOR_list* found;
-	found = FindElement(one, &previous, "third");
+	found = FindElement(&one, &previous, "third");
 
-	EXPECT_EQ(found, nullptr);
-
-	free(one);
-	free(two);
+	EXPECT_FALSE(found);
 }
 
-TEST(FindElement_test, FindElement_List2ElementsWithKeyElement_returnValidVal)
+TEST(FindElement_test, FindElement_List3ElementsMiddleKeyElement_returnValidVal)
 {
-	XOR_list* one = InitList();
-	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+	XOR_list one;
+	XOR_list two;
+	XOR_list three;
 
-	one->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
-	one->str = "first";
-	two->link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(NULL));
-	two->str = "second";
+	one.link = &two;
+	one.str = "first";
+
+	two.link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(&three));
+	two.str = "second";
+
+	three.link = &two;
+	three.str = "third";
 
 	XOR_list* previous = NULL;
 	XOR_list* found;
-	found = FindElement(one, &previous, "second");
+	found = FindElement(&one, &previous, "second");
 
-	EXPECT_EQ(found, two);
-
-	free(one);
-	free(two);
+	EXPECT_EQ(found, &two);
 }
 
-/*TEST(Delete_test, List_1_element_Expected_nullptr)
+TEST(FindElement_test, FindElement_List3ElementsFirstKeyElement_returnValidVal)
+{
+	XOR_list one;
+	XOR_list two;
+	XOR_list three;
+
+	one.link = &two;
+	one.str = "first";
+
+	two.link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(&three));
+	two.str = "second";
+
+	three.link = &two;
+	three.str = "third";
+
+	XOR_list* previous = NULL;
+	XOR_list* found;
+	found = FindElement(&one, &previous, "first");
+
+	EXPECT_EQ(found, &one);
+}
+TEST(FindElement_test, FindElement_List3ElementsLastKeyElement_returnValidVal)
+{
+	XOR_list one;
+	XOR_list two;
+	XOR_list three;
+
+	one.link = &two;
+	one.str = "first";
+
+	two.link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(&three));
+	two.str = "second";
+
+	three.link = &two;
+	three.str = "third";
+
+	XOR_list* previous = NULL;
+	XOR_list* found;
+	found = FindElement(&one, &previous, "third");
+
+	EXPECT_EQ(found, &three);
+}
+
+TEST(DeleteElement_test, DeleteElement_List3ElementsDelFirstElement_returnValidVal)
 {
 	XOR_list* one = (XOR_list*)malloc(sizeof(XOR_list));
-	one->link = NULL;
-	XOR_list* prev_next = NULL;
+	XOR_list two;
+	XOR_list three;
+	XOR_list* prev = NULL;
 
-	DeleteElement(one, prev_next, prev_next);
+	one->link = &two;
+	two.link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(&three));
+	three.link = &two;
 
-	EXPECT_EQ(one, nullptr);
-}*/
+	DeleteElement(one, prev);
 
-TEST(DeleteElement_test, DeleteElement_List3Elements_returnValidVal)
-{
-	XOR_list* one = InitList();
-	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
-	XOR_list* three = (XOR_list*)malloc(sizeof(XOR_list));
-
-	one->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
-	two->link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(three));
-	three->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
-
-	DeleteElement(two, one, three);
-
-	EXPECT_EQ(one->link, (XOR_list*)((uintptr_t)(three) ^ (uintptr_t)(NULL)));
-	EXPECT_EQ(three->link, (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(NULL)));
-
-	free(one);
-	free(three);
+	EXPECT_EQ(two.link, &three);
+	EXPECT_EQ(three.link, &two);
 }
 
-TEST(DeleteElementKey_Test, DeleteElementKey_List3Elements_returnValidVal)
+TEST(DeleteElement_test, DeleteElement_List3ElementsDelMiddleElement_returnValidVal)
 {
-	XOR_list* one = InitList();
+	XOR_list one;
 	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+	XOR_list three;
+
+	one.link = two;
+	two->link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(&three));
+	three.link = two;
+
+	DeleteElement(two, &one);
+
+	EXPECT_EQ(one.link, &three);
+	EXPECT_EQ(three.link, &one);
+}
+
+TEST(DeleteElement_test, DeleteElement_List3ElementsDelLastElement_returnValidVal)
+{
+	XOR_list one;
+	XOR_list two;
 	XOR_list* three = (XOR_list*)malloc(sizeof(XOR_list));
 
-	one->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
-	two->link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(three));
-	three->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
+	one.link = &two;
+	two.link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(three));
+	three->link = &two;
 
-	one->str = "first";
+	DeleteElement(three, &two);
+
+	EXPECT_EQ(one.link, &two);
+	EXPECT_EQ(two.link, &one);
+}
+
+TEST(DeleteElementKey_Test, DeleteElementKey_List3ElementsDelMiddleElement_returnValidVal)
+{
+	XOR_list one;
+	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+	XOR_list three;
+
+	one.link = two;
+	two->link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(&three));
+	three.link = two;
+
+	one.str = "first";
 	two->str = "second";
-	three->str = "third";
+	three.str = "third";
 
-	DeleteElementKey(one, "second");
+	DeleteElementKey(&one, "second");
 
-	EXPECT_EQ(one->link, (XOR_list*)((uintptr_t)(three) ^ (uintptr_t)(NULL)));
-	EXPECT_EQ(three->link, (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(NULL)));
+	EXPECT_EQ(one.link, &three);
+	EXPECT_EQ(three.link, &one);
 
-	free(one);
-	free(three);
 }
 
 TEST(DeleteElementKey_Test, DeleteElementKey_List2ElementsNoKeyElements_returnValidVal)
 {
-	XOR_list* one = InitList();
-	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+	XOR_list one;
+	XOR_list two;
 
-	one->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
-	two->link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(NULL));
+	one.link = &two;
+	one.str = "first";
+	two.link = &one;
+	two.str = "second";
 
-	one->str = "first";
-	two->str = "second";
+	DeleteElementKey(&one, "third");
 
-	DeleteElementKey(one, "third");
-
-	EXPECT_EQ(one->link, (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL)));
-	EXPECT_EQ(two->link, (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(NULL)));
-	EXPECT_STREQ((char*)(one->str), "first");
-	EXPECT_STREQ((char*)(two->str), "second");
-
-	free(one);
-	free(two);
+	EXPECT_EQ(one.link, &two);
+	EXPECT_EQ(two.link, &one);
+	EXPECT_STREQ((char*)(one.str), "first");
+	EXPECT_STREQ((char*)(two.str), "second");
 }
 
 TEST(DeleteElementKey_Test, DeleteElementKey_EmptyList_returnnullptr)
 {
-	XOR_list* one = InitList();
-	one->str = NULL;
-	DeleteElementKey(one, "second");
+	XOR_list one;
+	one.str = NULL;
+	one.link = NULL;
+	DeleteElementKey(&one, "second");
 
-	EXPECT_EQ(one->link, nullptr);
-	EXPECT_EQ(one->str, nullptr);
-	EXPECT_NE(one, nullptr);
-
-	free(one);
+	EXPECT_FALSE(one.link);
+	EXPECT_FALSE(one.str);
 }
 
-TEST(DeleteElementAddress_Test, DeleteElementAddress_List3Elements_returnValidVal)
+TEST(DeleteElementKey_Test, DeleteElementKey_List3ElementsDelFirstElement_returnValidVal)
 {
-	XOR_list* one = InitList();
-	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+
+	XOR_list* one = (XOR_list*)malloc(sizeof(XOR_list));
+	XOR_list two;
+	XOR_list three;
+
+	one->link = &two;
+	two.link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(&three));
+	three.link = &two;
+
+	one->str = "first";
+	two.str = "second";
+	three.str = "third";
+
+	DeleteElementKey(one, "first");
+
+	EXPECT_EQ(two.link, &three);
+	EXPECT_EQ(three.link, &two);
+}
+
+TEST(DeleteElementKey_Test, DeleteElementKey_List3ElementsDelLastElement_returnValidVal)
+{
+	XOR_list one;
+	XOR_list two;
 	XOR_list* three = (XOR_list*)malloc(sizeof(XOR_list));
 
-	one->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
-	two->link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(three));
-	three->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
+	one.link = &two;
+	two.link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(three));
+	three->link = &two;
 
-	DeleteElementAddress(one, two);
+	one.str = "first";
+	two.str = "second";
+	three->str = "third";
 
-	EXPECT_EQ(one->link, (XOR_list*)((uintptr_t)(three) ^ (uintptr_t)(NULL)));
-	EXPECT_EQ(three->link, (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(NULL)));
+	DeleteElementKey(&one, "third");
 
-	free(one);
-	free(three);
+	EXPECT_EQ(two.link, &one);
+	EXPECT_EQ(one.link, &two);
 }
 
-TEST(DeleteElementAddress_Test, DeleteElementAddress_List2Elements_returnValidVal)
+
+TEST(DeleteElementAddress_Test, DeleteElementAddress_List3ElementsDelMiddleElement_returnValidVal)
 {
-	XOR_list* one = InitList();
+	XOR_list one;
 	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+	XOR_list three;
 
-	one->link = (XOR_list*)((uintptr_t)(two) ^ (uintptr_t)(NULL));
-	two->link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(NULL));
+	one.link = two;
+	two->link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(&three));
+	three.link = two;
 
-	DeleteElementAddress(one, two);
+	DeleteElementAddress(&one, two);
 
-	EXPECT_EQ(one->link, nullptr);
-
-	free(one);
+	EXPECT_EQ(one.link, &three);
+	EXPECT_EQ(three.link, &one);
 }
 
+TEST(DeleteElementAddress_Test, DeleteElementAddress_List3ElementsDelFirstElement_returnValidVal)
+{
+	XOR_list* one = (XOR_list*)malloc(sizeof(XOR_list));
+	XOR_list two;
+	XOR_list three;
+
+	one->link = &two;
+	two.link = (XOR_list*)((uintptr_t)(one) ^ (uintptr_t)(&three));
+	three.link = &two;
+
+
+	DeleteElementAddress(one, one);
+
+	EXPECT_EQ(two.link, &three);
+	EXPECT_EQ(three.link, &two);
+}
+
+TEST(DeleteElementAddress_Test, DeleteElementAddress_List3ElementsDelLastElement_returnValidVal)
+{
+	XOR_list one;
+	XOR_list two;
+	XOR_list* three = (XOR_list*)malloc(sizeof(XOR_list));;
+
+	one.link = &two;
+	two.link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(three));
+	three->link = &two;
+
+
+	DeleteElementAddress(&one, three);
+
+	EXPECT_EQ(two.link, &one);
+	EXPECT_EQ(one.link, &two);
+}
