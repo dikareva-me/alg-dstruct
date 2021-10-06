@@ -27,14 +27,12 @@ void AddToList(XOR_list** head, char* str)
 {
     XOR_list* tmp = (XOR_list*)malloc(sizeof(XOR_list));
     if (tmp == NULL)
-    {
         return NULL;
-    }
 
     tmp->str = str;
 
     tmp->link = *head;
-    if (head != NULL)
+    if ((*head) != NULL)
         (*head)->link = XOR((*head)->link, tmp);
 
     *head = tmp;
@@ -53,13 +51,13 @@ XOR_list* FindElement(XOR_list* head, XOR_list** prev, char* str)
     XOR_list* cur = head;
 
     while (cur != NULL)
-    {
         if (cur->str == NULL)
             Iteration(&cur, prev);
-        else if (strcmp(cur->str, str) != 0)
-            Iteration(&cur, prev);
-        else break;
-    }
+        else
+            if (strcmp(cur->str, str) != 0)
+                Iteration(&cur, prev);
+            else
+                break;
 
     return cur;
 }
@@ -85,9 +83,7 @@ void DeleteElementKey(XOR_list* head, char* str)
     cur = FindElement(cur, &prev, str);
 
     if (cur != NULL)
-    {
         DeleteElement(cur, prev);
-    }
 }
 
 void DeleteElementAddress(XOR_list* head, XOR_list* ptr)
@@ -96,9 +92,8 @@ void DeleteElementAddress(XOR_list* head, XOR_list* ptr)
     XOR_list* prev = NULL;
 
     while (cur != ptr)
-    {
         Iteration(&cur, &prev);
-    }
+
     if (cur != NULL)
         DeleteElement(cur, prev);
 }

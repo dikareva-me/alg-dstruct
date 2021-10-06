@@ -69,6 +69,8 @@ TEST(Add_Element_To_List_Test, AddToList_List1element_returnValidVal)
 
 	EXPECT_TRUE(head->link);
 	EXPECT_EQ(head->str, str);
+
+	free(head);
 }
 
 TEST(Add_Element_To_List_Test, AddToList_List2elements_returnValidVal)
@@ -85,13 +87,16 @@ TEST(Add_Element_To_List_Test, AddToList_List2elements_returnValidVal)
 	AddToList(&head, str2);
 
 	one = list.link;
-	two = XOR(&list, one->link);
+	two = (XOR_list*)((uintptr_t)(&list) ^ (uintptr_t)(one->link));
 
 	EXPECT_STREQ(one->str, str1);
 	EXPECT_STREQ(two->str, str2);
 
 	EXPECT_TRUE(one);
 	EXPECT_TRUE(two);
+
+	free(one);
+	free(two);
 }
 
 TEST(Iteration_test, Iteration_list2ElementsIterFromHead_returnValidVal)
@@ -230,6 +235,7 @@ TEST(FindElement_test, FindElement_List3ElementsFirstKeyElement_returnValidVal)
 
 	EXPECT_EQ(found, &one);
 }
+
 TEST(FindElement_test, FindElement_List3ElementsLastKeyElement_returnValidVal)
 {
 	XOR_list one;
@@ -255,6 +261,7 @@ TEST(FindElement_test, FindElement_List3ElementsLastKeyElement_returnValidVal)
 TEST(DeleteElement_test, DeleteElement_List3ElementsDelFirstElement_returnValidVal)
 {
 	XOR_list* one = (XOR_list*)malloc(sizeof(XOR_list));
+	assert(one);
 	XOR_list two;
 	XOR_list three;
 	XOR_list* prev = NULL;
@@ -273,6 +280,7 @@ TEST(DeleteElement_test, DeleteElement_List3ElementsDelMiddleElement_returnValid
 {
 	XOR_list one;
 	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+	assert(two);
 	XOR_list three;
 
 	one.link = two;
@@ -290,6 +298,7 @@ TEST(DeleteElement_test, DeleteElement_List3ElementsDelLastElement_returnValidVa
 	XOR_list one;
 	XOR_list two;
 	XOR_list* three = (XOR_list*)malloc(sizeof(XOR_list));
+	assert(three);
 
 	one.link = &two;
 	two.link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(three));
@@ -301,10 +310,12 @@ TEST(DeleteElement_test, DeleteElement_List3ElementsDelLastElement_returnValidVa
 	EXPECT_EQ(two.link, &one);
 }
 
+
 TEST(DeleteElementKey_Test, DeleteElementKey_List3ElementsDelMiddleElement_returnValidVal)
 {
 	XOR_list one;
 	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+	assert(two);
 	XOR_list three;
 
 	one.link = two;
@@ -355,6 +366,7 @@ TEST(DeleteElementKey_Test, DeleteElementKey_List3ElementsDelFirstElement_return
 {
 
 	XOR_list* one = (XOR_list*)malloc(sizeof(XOR_list));
+	assert(one);
 	XOR_list two;
 	XOR_list three;
 
@@ -377,6 +389,7 @@ TEST(DeleteElementKey_Test, DeleteElementKey_List3ElementsDelLastElement_returnV
 	XOR_list one;
 	XOR_list two;
 	XOR_list* three = (XOR_list*)malloc(sizeof(XOR_list));
+	assert(three);
 
 	one.link = &two;
 	two.link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(three));
@@ -397,6 +410,7 @@ TEST(DeleteElementAddress_Test, DeleteElementAddress_List3ElementsDelMiddleEleme
 {
 	XOR_list one;
 	XOR_list* two = (XOR_list*)malloc(sizeof(XOR_list));
+	assert(two);
 	XOR_list three;
 
 	one.link = two;
@@ -412,6 +426,7 @@ TEST(DeleteElementAddress_Test, DeleteElementAddress_List3ElementsDelMiddleEleme
 TEST(DeleteElementAddress_Test, DeleteElementAddress_List3ElementsDelFirstElement_returnValidVal)
 {
 	XOR_list* one = (XOR_list*)malloc(sizeof(XOR_list));
+	assert(one);
 	XOR_list two;
 	XOR_list three;
 
@@ -430,7 +445,9 @@ TEST(DeleteElementAddress_Test, DeleteElementAddress_List3ElementsDelLastElement
 {
 	XOR_list one;
 	XOR_list two;
-	XOR_list* three = (XOR_list*)malloc(sizeof(XOR_list));;
+	XOR_list* three = (XOR_list*)malloc(sizeof(XOR_list));
+	assert(three);
+
 
 	one.link = &two;
 	two.link = (XOR_list*)((uintptr_t)(&one) ^ (uintptr_t)(three));
@@ -442,3 +459,24 @@ TEST(DeleteElementAddress_Test, DeleteElementAddress_List3ElementsDelLastElement
 	EXPECT_EQ(two.link, &one);
 	EXPECT_EQ(one.link, &two);
 }
+
+
+TEST(DeleteElementAddress_Test, DeleteElementAddress_List2ElementsNoKeyElements_returnValidVal)
+{
+	XOR_list one;
+	XOR_list two;
+	XOR_list* three = NULL;
+
+	one.link = &two;
+	one.str = "first";
+	two.link = &one;
+	two.str = "second";
+
+	DeleteElementAddress(&one, three);
+
+	EXPECT_EQ(one.link, &two);
+	EXPECT_EQ(two.link, &one);
+	EXPECT_STREQ((char*)(one.str), "first");
+	EXPECT_STREQ((char*)(two.str), "second");
+}
+
