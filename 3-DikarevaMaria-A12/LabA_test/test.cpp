@@ -480,3 +480,17 @@ TEST(DeleteElementAddress_Test, DeleteElementAddress_List2ElementsNoKeyElements_
 	EXPECT_STREQ((char*)(two.str), "second");
 }
 
+TEST(DeleteElementAddress_Test, DeleteElementAddress_EmptyList_returnnullptr)
+{
+	XOR_list* one = (XOR_list*)malloc(sizeof(XOR_list));
+	assert(one);
+	one->str = NULL;
+	one->link = NULL;
+	XOR_list* two = NULL;
+
+	DeleteElementAddress(one, two);
+
+	EXPECT_TRUE(one);
+	
+	free(one);
+}
