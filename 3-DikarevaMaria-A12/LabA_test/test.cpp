@@ -482,15 +482,15 @@ TEST(DeleteElementAddress_Test, DeleteElementAddress_List2ElementsNoKeyElements_
 
 TEST(DeleteElementAddress_Test, DeleteElementAddress_EmptyList_returnnullptr)
 {
-	XOR_list* one = (XOR_list*)malloc(sizeof(XOR_list));
-	assert(one);
-	one->str = NULL;
-	one->link = NULL;
+	XOR_list one;
+	one.str = NULL;
+	one.link = NULL;
 	XOR_list* two = NULL;
 
-	DeleteElementAddress(one, two);
+	DeleteElementAddress(&one, two);
 
-	EXPECT_TRUE(one);
-	
-	free(one);
+	EXPECT_FALSE(one.link);
+	EXPECT_FALSE(one.str);
+	EXPECT_FALSE(two);
+
 }
