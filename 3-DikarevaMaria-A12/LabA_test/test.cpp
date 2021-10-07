@@ -54,7 +54,7 @@ TEST(XOR_operation, XOR_3elementsAssociative_returnValidVal)
 	link1 = XOR(&one, &two);
 	link2 = XOR(&two, &three);
 
-	EXPECT_EQ(XOR(link1, &three), XOR(link2, &one));
+	EXPECT_EQ(XOR(link1, &three), XOR(&one, link2));
 
 }
 
