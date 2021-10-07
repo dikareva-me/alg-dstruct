@@ -465,19 +465,20 @@ TEST(DeleteElementAddress_Test, DeleteElementAddress_List2ElementsNoKeyElements_
 {
 	XOR_list one;
 	XOR_list two;
-	XOR_list* three = NULL;
+	XOR_list three;
 
 	one.link = &two;
 	one.str = "first";
 	two.link = &one;
 	two.str = "second";
 
-	DeleteElementAddress(&one, three);
+	DeleteElementAddress(&one, &three);
 
 	EXPECT_EQ(one.link, &two);
 	EXPECT_EQ(two.link, &one);
 	EXPECT_STREQ((char*)(one.str), "first");
 	EXPECT_STREQ((char*)(two.str), "second");
+	EXPECT_TRUE(&three);
 }
 
 TEST(DeleteElementAddress_Test, DeleteElementAddress_EmptyList_returnnullptr)
@@ -485,12 +486,11 @@ TEST(DeleteElementAddress_Test, DeleteElementAddress_EmptyList_returnnullptr)
 	XOR_list one;
 	one.str = NULL;
 	one.link = NULL;
-	XOR_list* two = NULL;
+	XOR_list two;
 
-	DeleteElementAddress(&one, two);
+	DeleteElementAddress(&one, &two);
 
 	EXPECT_FALSE(one.link);
 	EXPECT_FALSE(one.str);
-	EXPECT_FALSE(two);
-
+	EXPECT_TRUE(&two);
 }

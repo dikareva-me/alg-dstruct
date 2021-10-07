@@ -91,7 +91,7 @@ void DeleteElementAddress(XOR_list* head, XOR_list* ptr)
     XOR_list* cur = head;
     XOR_list* prev = NULL;
 
-    while (cur != ptr)
+    while (cur != ptr && cur != NULL)
         Iteration(&cur, &prev);
 
     if (cur != NULL)
