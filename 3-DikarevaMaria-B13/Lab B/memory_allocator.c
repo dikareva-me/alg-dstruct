@@ -24,7 +24,7 @@ int* enddescriptor(descriptor* desc) {
 int meminit(void* pMemory, int size) {
     if (size <= memgetminimumsize())
         return 0;
-	memoryStart = (void*)pMemory;
+    memoryStart = (void*)pMemory;
     head = (descriptor*)pMemory;
     head->size = size;
     head->next = NULL;
@@ -143,7 +143,7 @@ void memfree(void* p) {
                 head->prev = NULL;
             }
             else {
-                if  (rightBlockDesc->prev != NULL)
+                if (rightBlockDesc->prev != NULL)
                     rightBlockDesc->prev->next = rightBlockDesc->next;
                 if (rightBlockDesc->next != NULL)
                     rightBlockDesc->next->prev = rightBlockDesc->prev;
