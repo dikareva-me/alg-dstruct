@@ -19,17 +19,17 @@ PC configuration:
 */
 
 
-#define MAX_VERTIX 20000
+#define MAX_VERTICES 20000
 #define NUM_EDGES 50000
 #define MAX_INT_LENGTH 10
 
 TEST(StressTest, StressTest_GraphGenerating) {
-	const int maxVertex = MAX_VERTIX;
+	const int maxVertex = MAX_VERTICES;
 	FILE* file = fopen("file.txt", "w");
 	ASSERT_TRUE(file);
 	int vertex1 = 0, vertex2 = 0;
 
-	fprintf(file, "%d\n", MAX_VERTIX);
+	fprintf(file, "%d\n", MAX_VERTICES);
 	for (int i = 0; i < NUM_EDGES; i++) {
 		do
 			vertex2 = rand() % maxVertex;
@@ -41,7 +41,6 @@ TEST(StressTest, StressTest_GraphGenerating) {
 }
 
 TEST(StressTest, StressTest_FillingInFile) {
-	int depthFirstTraversalResult;
 	FILE* fileIn = fopen("file.txt", "r");
 	ASSERT_TRUE(fileIn);
 	char* verticesCountBuf = (char*)malloc(MAX_INT_LENGTH * sizeof(char));
