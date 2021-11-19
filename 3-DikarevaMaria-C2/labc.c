@@ -50,7 +50,7 @@ void StackDestroy(Stack* stack) {
     while (next != NULL) {
         Node* nodeToFree = next;
         next = next->next;
-        free(next);
+        free(nodeToFree);
     }
     free(stack);
 }
@@ -71,7 +71,7 @@ void ReadGraph(FILE* stream, int** matrix) {
 
 int** InitMatrix(int vertexNum) {
     int** matrix = (int**)malloc(sizeof(int*) * vertexNum);
-    if (matrix == NULL) 
+    if (matrix == NULL)
         return NULL;
 
     for (int i = 0; i < vertexNum; i++) {
@@ -102,19 +102,23 @@ int DepthFirstSearch(FILE* stream, int** matrix, int vertexNum) {
     int* used = (int*)malloc(sizeof(int) * vertexNum);
     if (used == NULL)
         return FALSE;
+
+    Stack* tmp = NULL;
     Stack* stack = StackInit();
     if (stack == NULL) {
         free(used);
-        StackDestroy(stack);
         return FALSE;
     }
 
     int firstVertex = 0;
-    stack = StackPush(stack, firstVertex);
-    if (stack == NULL) {
+    tmp = StackPush(stack, firstVertex);
+    if (tmp == NULL) {
         StackDestroy(stack);
+        free(used);
         return FALSE;
     }
+    else
+        stack = tmp;
 
     for (int i = 0; i < vertexNum; i++)
         used[i] = 0;
@@ -135,11 +139,15 @@ int DepthFirstSearch(FILE* stream, int** matrix, int vertexNum) {
         else {
             used[nextVertex] = 1;
             fprintf(stream, "%d ", nextVertex);
-            stack = StackPush(stack, nextVertex);
-            if (stack == NULL) {
+            tmp = StackPush(stack, firstVertex);
+            if (tmp == NULL) {
                 StackDestroy(stack);
+                free(used);
                 return FALSE;
             }
+            else
+                stack = tmp;
+
         }
     }
     StackDestroy(stack);
