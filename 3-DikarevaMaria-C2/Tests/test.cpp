@@ -8,14 +8,14 @@
 IDE: Visual Studio 2019 Community Edition
 OS: Windows 10 Pro Ver. 20H2 Build 19042.1288
 PC configuration:
-	CPU:            AMD Athlon 300U with Radeon Vega Mobile Gfx       2.40 GHz
-	Motherboard:    HP 85EC 51.17
-	RAM:            8.00 GB
-	SSD:            477 GB
+	CPU:			AMD Athlon 300U with Radeon Vega Mobile Gfx		 2.40 GHz
+	Motherboard:	HP 85EC 51.17
+	RAM:			8.00 GB
+	SSD:			477 GB
 
-	Time:	0.3 sec to generate graph
-			20.387 sec to output answer
-	RAM:    ~1.46 GB
+	Time:			0.3 sec to generate graph
+					20.387 sec to output answer
+	RAM:			~1.46 GB
 */
 
 

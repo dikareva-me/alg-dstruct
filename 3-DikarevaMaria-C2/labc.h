@@ -23,14 +23,14 @@ extern "C" {
 
 	Stack* StackInit();
 	Stack* StackPush(Stack* stack, int data);
-    int StackPop(Stack* stack);
-    int StackEmpty(Stack* stack);
-    void StackDestroy(Stack* stack);
-    void ReadGraph(FILE* stream, int** matrix);
-    int** InitMatrix(int vertexNum);
+	int StackPop(Stack* stack);
+	int StackEmpty(Stack* stack);
+	void StackDestroy(Stack* stack);
+	void ReadGraph(FILE* stream, int** matrix);
+	int** InitMatrix(int vertexNum);
 	void FillZero(int** matrix, int vertexNum);
-    void DestroyMatrix(int** matrix, int vertexNum);
-    int DepthFirstSearch(FILE* stream, int** matrix, int vertexNum);
+	void DestroyMatrix(int** matrix, int vertexNum);
+	int DepthFirstSearch(FILE* stream, int** matrix, int vertexNum);
 
 
 
