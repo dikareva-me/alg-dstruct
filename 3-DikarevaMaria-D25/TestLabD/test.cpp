@@ -45,12 +45,12 @@ TEST(StressTest, SolutionStressTest) {
 }
 
 
-int ReadOutputData(const char* filenameOut, int* result, int size) {
+unsigned ReadOutputData(const char* filenameOut, unsigned* result, unsigned size) {
 	FILE* fileOut = fopen(filenameOut, "r");
-	int factNumVals = 0;
+	unsigned factNumVals = 0;
 	if (fileOut == NULL)
 		return 0;
-	for (int i = 0; i < size; i++)
+	for (unsigned i = 0; i < size; i++)
 	{
 		if (fscanf(fileOut, "%d ", &result[i]) == -1)
 			break;
@@ -61,14 +61,14 @@ int ReadOutputData(const char* filenameOut, int* result, int size) {
 }
 
 //ValsNumFOut - number of values in the output file
-void TestFunc(const char* filenameIn, const char* filenameOut, int* correctResult, int ValsNumFOut) {
+void TestFunc(const char* filenameIn, const char* filenameOut, unsigned* correctResult, unsigned ValsNumFOut) {
 	ASSERT_TRUE(LabSolution(filenameIn, filenameOut));
 	
-	int result[MAX_NUM_ITEMS] = { 0 };
+	unsigned result[MAX_NUM_ITEMS] = { 0 };
 
 	EXPECT_EQ(ReadOutputData(filenameOut, result, MAX_NUM_ITEMS), ValsNumFOut);
 
-	for (int i = 0; i < ValsNumFOut; i++)
+	for (unsigned i = 0; i < ValsNumFOut; i++)
 		EXPECT_EQ(result[i], correctResult[i]);
 }
 
@@ -92,28 +92,28 @@ private:
 
 //Example from lab d25 task text
 TEST_F(FunctionalTest, D25Test) {
-	int correctResult[] = { 0 };
+	unsigned correctResult[] = { 0 };
 	TestFunc("test_data/D25Test/input.txt", 
 		"test_data/D25Test/output.txt", correctResult, 1);
 }
 
 //K = max price of items in Knapsack. 
 TEST_F(FunctionalTest, requiredPriceEQMaxPrice) {
-	int correctResult[] = { 2, 3 };
+	unsigned correctResult[] = { 2, 3 };
 	TestFunc("test_data/KEqualsMaxPrice/input.txt", 
 		"test_data/KEqualsMaxPrice/output.txt", correctResult, 2);
 }
 
 //K > max price of items in Knapsack. 
 TEST_F(FunctionalTest, requiredPriceBiggerMaxPrice) {
-	int correctResult[] = { 0 };
+	unsigned correctResult[] = { 0 };
 	TestFunc("test_data/KBiggerMaxPrice/input.txt",
 		"test_data/KBiggerMaxPrice/output.txt", correctResult, 1);
 }
 
 //K < max price of items in Knapsack with another set of items. 
 TEST_F(FunctionalTest, requiredPriceSmallerMaxPrice) {
-	int correctResult[] = { 1, 2, 4 };
+	unsigned correctResult[] = { 1, 2, 4 };
 	TestFunc("test_data/KSmallerMaxPrice/input.txt",
 		"test_data/KSmallerMaxPrice/output.txt", correctResult, 3);
 }

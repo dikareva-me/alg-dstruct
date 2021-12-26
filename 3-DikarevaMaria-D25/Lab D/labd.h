@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
     typedef struct Node {
-        int object;
+        unsigned object;
         struct Node* next;
     } Node;
 
@@ -21,8 +21,8 @@ extern "C" {
     void ListPrint(Node* list, FILE* output);
     bool ReadInput(FILE* input);
     void ListDestroy(Node* list);
-    long MaxVal(long a, long b);
-    void DestroyTable(long** table);
+    unsigned MaxVal(unsigned a, unsigned b);
+    void DestroyTable(unsigned** table);
     bool FillKnapsack(FILE* output);
     bool LabSolution(const char* filenameIn, const char* filenameOut);
 

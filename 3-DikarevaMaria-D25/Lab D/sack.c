@@ -8,11 +8,11 @@
 
 #pragma warning(disable:4996)
 
-long* g_objectWeight;
-long* g_objectCost;
-int g_objectCount;
-long g_sackCapacity;
-long g_requiredPrice;
+unsigned* g_objectWeight;
+unsigned* g_objectCost;
+unsigned g_objectCount;
+unsigned g_sackCapacity;
+unsigned g_requiredPrice;
 
 
 Node* ListInit() {
@@ -38,28 +38,28 @@ bool ListPush(Node** headlist, unsigned objNum) {
 void ListPrint(Node* list, FILE* output) {
     Node* iter = list;
     while (iter != NULL) {
-        fprintf(output, "%d ", iter->object);
+        fprintf(output, "%u ", iter->object);
         iter = iter->next;
     }
 }
 
 bool ReadInput(FILE* input) {
-    fscanf(input, "%d %ld %ld", &g_objectCount, &g_sackCapacity, &g_requiredPrice);
+    fscanf(input, "%u %u %u", &g_objectCount, &g_sackCapacity, &g_requiredPrice);
 
-    g_objectWeight = (long*)malloc(g_objectCount * sizeof(long));
+    g_objectWeight = (unsigned*)malloc(g_objectCount * sizeof(unsigned));
     if (g_objectWeight == NULL) {
         return false;
     }
-    g_objectCost = (long*)malloc(g_objectCount * sizeof(long));
+    g_objectCost = (unsigned*)malloc(g_objectCount * sizeof(unsigned));
     if (g_objectCost == NULL) {
         free(g_objectWeight);
         return false;
     }
 
-    for (int i = 0; i < g_objectCount; i++)
-        fscanf(input, "%ld ", &g_objectWeight[i]);
-    for (int i = 0; i < g_objectCount; i++)
-        fscanf(input, "%ld ", &g_objectCost[i]);
+    for (unsigned i = 0; i < g_objectCount; i++)
+        fscanf(input, "%u ", &g_objectWeight[i]);
+    for (unsigned i = 0; i < g_objectCount; i++)
+        fscanf(input, "%u ", &g_objectCost[i]);
 
     return true;
 }
@@ -73,12 +73,12 @@ void ListDestroy(Node* list) {
     }
 }
 
-long MaxVal(long a, long b) {
+unsigned MaxVal(unsigned a, unsigned b) {
     return (a > b) ? a : b; 
 }
 
-void DestroyTable(long** table) {
-    for (int i = 0; i < g_objectCount + 1; i++) {
+void DestroyTable(unsigned** table) {
+    for (unsigned i = 0; i < g_objectCount + 1; i++) {
         free(table[i]);
     }
     free(table);
@@ -86,19 +86,19 @@ void DestroyTable(long** table) {
 
 bool FillKnapsack(FILE* output)
 {
-    long weight, resultPrice;
+    unsigned weight, resultPrice;
 
-    long** tableSack = (long**)malloc((g_objectCount + 1) * sizeof(long*));
+    unsigned** tableSack = (unsigned**)malloc((g_objectCount + 1) * sizeof(unsigned*));
     if (tableSack == NULL) {
         free(g_objectWeight);
         free(g_objectCost);
         return false;
     }
 
-    for (int i = 0; i < g_objectCount + 1; i++) {
-        tableSack[i] = (long*)malloc((g_sackCapacity + 1) * sizeof(long));
+    for (unsigned i = 0; i < g_objectCount + 1; i++) {
+        tableSack[i] = (unsigned*)malloc((g_sackCapacity + 1) * sizeof(unsigned));
         if (tableSack[i] == NULL) {
-            for (int j = 0; j <= i; j++)
+            for (unsigned j = 0; j <= i; j++)
                 free(tableSack[j]);
             free(tableSack);
             free(g_objectWeight);
@@ -115,8 +115,8 @@ bool FillKnapsack(FILE* output)
         return false;
     }
 
-    for (int i = 0; i < g_objectCount + 1; i++) {
-        for (long w = 0; w < g_sackCapacity + 1; w++) {
+    for (unsigned i = 0; i < g_objectCount + 1; i++) {
+        for (unsigned w = 0; w < g_sackCapacity + 1; w++) {
             if (i == 0 || w == 0)
                 tableSack[i][w] = 0;
             else
@@ -133,7 +133,7 @@ bool FillKnapsack(FILE* output)
     if (resultPrice >= g_requiredPrice)
     {
         weight = g_sackCapacity;
-        for (int i = g_objectCount; i > 0 && resultPrice > 0; i--) {
+        for (unsigned i = g_objectCount; i > 0 && resultPrice > 0; i--) {
             if (resultPrice == tableSack[i - 1][weight])
                 continue;
             else {
