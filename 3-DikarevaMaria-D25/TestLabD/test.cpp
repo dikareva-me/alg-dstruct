@@ -47,23 +47,27 @@ TEST(StressTest, SolutionStressTest) {
 
 int ReadOutputData(const char* filenameOut, int* result, int size) {
 	FILE* fileOut = fopen(filenameOut, "r");
+	int factNumVals = 0;
 	if (fileOut == NULL)
 		return 0;
 	for (int i = 0; i < size; i++)
-		if (!fscanf(fileOut, "%d ", &result[i]))
+	{
+		if (fscanf(fileOut, "%d ", &result[i]) == -1)
 			break;
+		factNumVals++;
+	}
 	fclose(fileOut);
-	return 1;
+	return factNumVals;
 }
 
 //ValsNumFOut - number of values in the output file
-void TestFunc(const char* filenameIn, const char* filenameOut, int correctResult[], int ValsNumFOut) {
+void TestFunc(const char* filenameIn, const char* filenameOut, int* correctResult, int ValsNumFOut) {
 	ASSERT_TRUE(LabSolution(filenameIn, filenameOut));
 	
 	int result[MAX_NUM_ITEMS] = { 0 };
 
-	ASSERT_TRUE(ReadOutputData(filenameOut, result, MAX_NUM_ITEMS));
-	
+	EXPECT_EQ(ReadOutputData(filenameOut, result, MAX_NUM_ITEMS), ValsNumFOut);
+
 	for (int i = 0; i < ValsNumFOut; i++)
 		EXPECT_EQ(result[i], correctResult[i]);
 }
@@ -111,6 +115,6 @@ TEST_F(FunctionalTest, requiredPriceBiggerMaxPrice) {
 TEST_F(FunctionalTest, requiredPriceSmallerMaxPrice) {
 	int correctResult[] = { 1, 2, 4 };
 	TestFunc("test_data/KSmallerMaxPrice/input.txt",
-		"test_data/KSmallerMaxPrice/output.txt", correctResult, 1);
+		"test_data/KSmallerMaxPrice/output.txt", correctResult, 3);
 }
 

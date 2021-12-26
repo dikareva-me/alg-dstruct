@@ -14,15 +14,15 @@ extern "C" {
 
     typedef struct headList {
         Node* first;
-    }headList;
+    } headList;
 
     Node* ListInit();
     bool ListPush(Node** headlist, unsigned objNum);
     void ListPrint(Node* list, FILE* output);
     bool ReadInput(FILE* input);
     void ListDestroy(Node* list);
-    int MaxVal(int a, int b);
-    void DestroyTable(int** table);
+    long MaxVal(long a, long b);
+    void DestroyTable(long** table);
     bool FillKnapsack(FILE* output);
     bool LabSolution(const char* filenameIn, const char* filenameOut);
 

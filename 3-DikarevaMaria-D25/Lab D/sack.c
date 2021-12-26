@@ -8,11 +8,11 @@
 
 #pragma warning(disable:4996)
 
-int* g_objectWeight;
-int* g_objectCost;
+long* g_objectWeight;
+long* g_objectCost;
 int g_objectCount;
-int g_sackCapacity;
-int g_requiredPrice;
+long g_sackCapacity;
+long g_requiredPrice;
 
 
 Node* ListInit() {
@@ -44,22 +44,22 @@ void ListPrint(Node* list, FILE* output) {
 }
 
 bool ReadInput(FILE* input) {
-    fscanf(input, "%d %d %d", &g_objectCount, &g_sackCapacity, &g_requiredPrice);
+    fscanf(input, "%d %ld %ld", &g_objectCount, &g_sackCapacity, &g_requiredPrice);
 
-    g_objectWeight = (int*)malloc(g_objectCount * sizeof(int));
+    g_objectWeight = (long*)malloc(g_objectCount * sizeof(long));
     if (g_objectWeight == NULL) {
         return false;
     }
-    g_objectCost = (int*)malloc(g_objectCount * sizeof(int));
+    g_objectCost = (long*)malloc(g_objectCount * sizeof(long));
     if (g_objectCost == NULL) {
         free(g_objectWeight);
         return false;
     }
 
     for (int i = 0; i < g_objectCount; i++)
-        fscanf(input, "%d ", &g_objectWeight[i]);
+        fscanf(input, "%ld ", &g_objectWeight[i]);
     for (int i = 0; i < g_objectCount; i++)
-        fscanf(input, "%d ", &g_objectCost[i]);
+        fscanf(input, "%ld ", &g_objectCost[i]);
 
     return true;
 }
@@ -73,11 +73,11 @@ void ListDestroy(Node* list) {
     }
 }
 
-int MaxVal(int a, int b) { 
+long MaxVal(long a, long b) {
     return (a > b) ? a : b; 
 }
 
-void DestroyTable(int** table) {
+void DestroyTable(long** table) {
     for (int i = 0; i < g_objectCount + 1; i++) {
         free(table[i]);
     }
@@ -86,9 +86,9 @@ void DestroyTable(int** table) {
 
 bool FillKnapsack(FILE* output)
 {
-    int weight, resultPrice;
+    long weight, resultPrice;
 
-    int** tableSack = (int**)malloc((g_objectCount + 1) * sizeof(int*));
+    long** tableSack = (long**)malloc((g_objectCount + 1) * sizeof(long*));
     if (tableSack == NULL) {
         free(g_objectWeight);
         free(g_objectCost);
@@ -96,7 +96,7 @@ bool FillKnapsack(FILE* output)
     }
 
     for (int i = 0; i < g_objectCount + 1; i++) {
-        tableSack[i] = (int*)malloc((g_sackCapacity + 1) * sizeof(int));
+        tableSack[i] = (long*)malloc((g_sackCapacity + 1) * sizeof(long));
         if (tableSack[i] == NULL) {
             for (int j = 0; j <= i; j++)
                 free(tableSack[j]);
@@ -116,7 +116,7 @@ bool FillKnapsack(FILE* output)
     }
 
     for (int i = 0; i < g_objectCount + 1; i++) {
-        for (int w = 0; w < g_sackCapacity + 1; w++) {
+        for (long w = 0; w < g_sackCapacity + 1; w++) {
             if (i == 0 || w == 0)
                 tableSack[i][w] = 0;
             else
