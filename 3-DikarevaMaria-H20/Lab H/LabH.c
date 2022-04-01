@@ -36,7 +36,7 @@ tree_t* FindNode(tree_t* root, int data) {
     return cur;
 }
 
-void RotateLeft(tree_t** root, tree_t* a) {
+tree_t* RotateLeft(tree_t* root, tree_t* a) {
     tree_t* b = a->right;
     
     if (b != NIL)
@@ -49,7 +49,7 @@ void RotateLeft(tree_t** root, tree_t* a) {
             a->parent->right = b;
     }
     else 
-        *root = b;
+        root = b;
 
     a->right = b->left;
     if (b->left != NIL)
@@ -58,9 +58,11 @@ void RotateLeft(tree_t** root, tree_t* a) {
     b->left = a;
     if (a != NIL)
         a->parent = b;
+
+    return root;
 }
 
-void RotateRight(tree_t** root, tree_t* a) {
+tree_t* RotateRight(tree_t* root, tree_t* a) {
     tree_t* b = a->left;
 
     if (b != NIL)
@@ -73,7 +75,7 @@ void RotateRight(tree_t** root, tree_t* a) {
             a->parent->right = b;
     }
     else 
-        *root = b;
+        root = b;
 
     a->left = b->right;
     if (b->right != NIL)
@@ -82,13 +84,12 @@ void RotateRight(tree_t** root, tree_t* a) {
     b->right = a;
     if (a != NIL)
         a->parent = b;
+
+    return root;
 }
 
-void FixInsert(tree_t** root, tree_t* node) {
-    tree_t* noderoot = (*root);
-    tree_t noder = **root;
-    if (noderoot == (*root))
-    while (node->parent != NULL && node->parent->color == RED) {
+tree_t* FixInsert(tree_t* root, tree_t* node) {
+    while (node != root && node->parent->color == RED) {
         if (node->parent == node->parent->parent->left) {
             //node and it's parent are on the left, uncle on the right
             tree_t* another_node = node->parent->parent->right;
@@ -103,12 +104,12 @@ void FixInsert(tree_t** root, tree_t* node) {
                 //if uncle is black
                 if (node == node->parent->right) {
                     node = node->parent;
-                    RotateLeft(root, node);
+                    root = RotateLeft(root, node);
                 }
 
                 node->parent->color = BLACK;
                 node->parent->parent->color = RED;
-                RotateRight(root, node->parent->parent);
+                root = RotateRight(root, node->parent->parent);
             }
         }
         else {
@@ -123,15 +124,17 @@ void FixInsert(tree_t** root, tree_t* node) {
             else {
                 if (node == node->parent->left) {
                     node = node->parent;
-                    RotateRight(root, node);
+                    root = RotateRight(root, node);
                 }
                 node->parent->color = BLACK;
                 node->parent->parent->color = RED;
-                RotateLeft(root, node->parent->parent);
+                root = RotateLeft(root, node->parent->parent);
             }
         }
     }
-    (*root)->color = BLACK;
+    (root)->color = BLACK;
+
+    return root;
 }
 
 
@@ -165,19 +168,19 @@ tree_t* Insert(tree_t* root, int data) {
     }
     else
         root = new_node;
-    FixInsert(&root, new_node);
+    root = FixInsert(root, new_node);
     return root;
 }
 
 
-void FixDelete(tree_t** root, tree_t* node) {
-    while (node != *root && node->color == BLACK) {
+tree_t* FixDelete(tree_t* root, tree_t* node) {
+    while (node != root && node->color == BLACK) {
         if (node == node->parent->left) {
             tree_t* another_node = node->parent->right;
             if (another_node->color == RED) {
                 another_node->color = BLACK;
                 node->parent->color = RED;
-                RotateLeft(root, node->parent);
+                root = RotateLeft(root, node->parent);
                 another_node = node->parent->right;
             }
             if (another_node->left->color == BLACK && another_node->right->color == BLACK) {
@@ -188,14 +191,14 @@ void FixDelete(tree_t** root, tree_t* node) {
                 if (another_node->right->color == BLACK) {
                     another_node->left->color = BLACK;
                     another_node->color = RED;
-                    RotateRight(root, another_node);
+                    root = RotateRight(root, another_node);
                     another_node = node->parent->right;
                 }
                 another_node->color = node->parent->color;
                 node->parent->color = BLACK;
                 another_node->right->color = BLACK;
-                RotateLeft(root, node->parent);
-                node = *root;
+                root = RotateLeft(root, node->parent);
+                node = root;
             }
         }
         else {
@@ -203,7 +206,7 @@ void FixDelete(tree_t** root, tree_t* node) {
             if (another_node->color == RED) {
                 another_node->color = BLACK;
                 node->parent->color = RED;
-                RotateRight(root, node->parent);
+                root = RotateRight(root, node->parent);
                 another_node = node->parent->left;
             }
             if (another_node->right->color == BLACK && another_node->left->color == BLACK) {
@@ -214,25 +217,26 @@ void FixDelete(tree_t** root, tree_t* node) {
                 if (another_node->left->color == BLACK) {
                     another_node->right->color = BLACK;
                     another_node->color = RED;
-                    RotateLeft(root, another_node);
+                    root = RotateLeft(root, another_node);
                     another_node = node->parent->left;
                 }
                 another_node->color = node->parent->color;
                 node->parent->color = BLACK;
                 another_node->left->color = BLACK;
-                RotateRight(root, node->parent);
-                node = *root;
+                root = RotateRight(root, node->parent);
+                node = root;
             }
         }
     }
     node->color = BLACK;
+    return root;
 }
 
 
-bool Delete(tree_t* root, int data) {
+tree_t* Delete(tree_t* root, int data) {
     tree_t* node = FindNode(root, data);
     if (node == NIL || node == NULL)
-        return false;
+        return NULL;
 
     tree_t* node_to_free;
     if (node->left == NIL || node->right == NIL)
@@ -250,7 +254,7 @@ bool Delete(tree_t* root, int data) {
         child = node_to_free->right;
 
     child->parent = node_to_free->parent;
-    if (node_to_free != root) {
+    if (node_to_free->parent != NULL) {
         if (node_to_free == node_to_free->parent->left)
             node_to_free->parent->left = child;
         else
@@ -262,10 +266,10 @@ bool Delete(tree_t* root, int data) {
     if (node_to_free != node) 
         node->data = node_to_free->data;
     if (node_to_free->color == BLACK)
-        FixDelete(&root, child);
+        root = FixDelete(root, child);
 
     free(node_to_free);
-    return true;
+    return root;
 }
 
 void DestroyTree(tree_t* node) {
@@ -291,7 +295,7 @@ int main() {
             root = Insert(root, data);
             break;
         case 'r':
-            Delete(root, data);
+            root = Delete(root, data);
             break;
         case 'f':
             if (FindNode(root, data) != NIL)
