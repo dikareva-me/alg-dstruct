@@ -3,22 +3,12 @@
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h> 
+#include "labh.h"
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
 #pragma warning (disable:4996)
 #define SIZE_BUFFER 16
 
-typedef enum {
-    BLACK, RED
-} node_color;
-
-typedef struct tree_t {
-    struct tree_t* left;
-    struct tree_t* right;
-    struct tree_t* parent;
-    node_color color;
-    int data;
-} tree_t;
-
-#define NIL &sentinel
 tree_t sentinel = { NIL, NIL, NULL, BLACK, 0 };
 
 tree_t* FindNode(tree_t* root, int data) {
@@ -38,17 +28,17 @@ tree_t* FindNode(tree_t* root, int data) {
 
 tree_t* RotateLeft(tree_t* root, tree_t* a) {
     tree_t* b = a->right;
-    
+
     if (b != NIL)
         b->parent = a->parent;
 
     if (a->parent != NULL) {
         if (a->parent->left == a)
             a->parent->left = b;
-        else 
+        else
             a->parent->right = b;
     }
-    else 
+    else
         root = b;
 
     a->right = b->left;
@@ -71,10 +61,10 @@ tree_t* RotateRight(tree_t* root, tree_t* a) {
     if (a->parent != NULL) {
         if (a->parent->left == a)
             a->parent->left = b;
-        else 
+        else
             a->parent->right = b;
     }
-    else 
+    else
         root = b;
 
     a->left = b->right;
@@ -250,7 +240,7 @@ tree_t* Delete(tree_t* root, int data) {
     tree_t* child;
     if (node_to_free->left != NIL)
         child = node_to_free->left;
-    else 
+    else
         child = node_to_free->right;
 
     child->parent = node_to_free->parent;
@@ -263,7 +253,7 @@ tree_t* Delete(tree_t* root, int data) {
     else
         root = child;
 
-    if (node_to_free != node) 
+    if (node_to_free != node)
         node->data = node_to_free->data;
     if (node_to_free->color == BLACK)
         root = FixDelete(root, child);
@@ -283,13 +273,14 @@ void DestroyTree(tree_t* node) {
     free(node);
 }
 
-int main() {
+bool LabSol(FILE* fileIn, FILE* fileOut) {
     int data;
     char func;
     tree_t* root = NIL;
-    while (scanf("%c", &func) >= 1) {
+
+    while (fscanf(fileIn, "%c", &func) >= 1) {
         if (func != 'q')
-            scanf("%i", &data);
+            fscanf(fileIn, "%i", &data);
         switch (func) {
         case 'a':
             root = Insert(root, data);
@@ -299,9 +290,9 @@ int main() {
             break;
         case 'f':
             if (FindNode(root, data) != NIL)
-                puts("yes");
+                fprintf(fileOut, "yes\n");
             else
-                puts("no");
+                fprintf(fileOut, "no\n");
             break;
         case 'q':
             DestroyTree(root);
@@ -309,5 +300,6 @@ int main() {
         }
     }
     DestroyTree(root);
-    return 0;
+    return true;
 }
+

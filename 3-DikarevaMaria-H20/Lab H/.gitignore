@@ -2,3 +2,4 @@ Debug
 *.vcxproj*
 *.sln
 *.vs
+packages
