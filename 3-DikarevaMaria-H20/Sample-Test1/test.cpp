@@ -52,3 +52,9 @@ TEST(test, example_test) {
 	TestFunc("test_data/example_test/input.txt",
 		"test_data/example_test/output.txt", "test_data/example_test/factres.txt");
 }
+
+
+TEST(test, del_nonexistent_node) {
+	TestFunc("test_data/del_nonexistent_node/input.txt",
+		"test_data/del_nonexistent_node/output.txt", "test_data/del_nonexistent_node/factres.txt");
+}

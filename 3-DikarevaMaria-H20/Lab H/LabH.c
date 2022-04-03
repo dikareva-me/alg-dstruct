@@ -10,10 +10,9 @@
 #define SIZE_BUFFER 16
 
 tree_t sentinel = { NIL, NIL, NULL, BLACK, 0 };
-
 tree_t* FindNode(tree_t* root, int data) {
     tree_t* cur = root;
-    while (cur != NIL) {
+    while (cur != NIL && cur != NULL) {
         if (data == cur->data)
             break;
         else {
@@ -133,7 +132,7 @@ tree_t* Insert(tree_t* root, int data) {
     tree_t* prev = NULL;
     tree_t* new_node = (tree_t*)malloc(sizeof(tree_t));
     if (new_node == NULL)
-        return NULL;
+        return root;
 
     while (cur != NIL) {
         if (data == cur->data)
@@ -223,10 +222,11 @@ tree_t* FixDelete(tree_t* root, tree_t* node) {
 }
 
 
+
 tree_t* Delete(tree_t* root, int data) {
     tree_t* node = FindNode(root, data);
     if (node == NIL || node == NULL)
-        return NULL;
+        return root;
 
     tree_t* node_to_free;
     if (node->left == NIL || node->right == NIL)
@@ -263,7 +263,7 @@ tree_t* Delete(tree_t* root, int data) {
 }
 
 void DestroyTree(tree_t* node) {
-    if (node == NIL)
+    if (node == NIL || node == NULL)
         return;
     if (node->left != NIL)
         DestroyTree(node->left);
@@ -277,6 +277,7 @@ bool LabSol(FILE* fileIn, FILE* fileOut) {
     int data;
     char func;
     tree_t* root = NIL;
+    tree_t* found_node = NULL;
 
     while (fscanf(fileIn, "%c", &func) >= 1) {
         if (func != 'q')
@@ -289,10 +290,11 @@ bool LabSol(FILE* fileIn, FILE* fileOut) {
             root = Delete(root, data);
             break;
         case 'f':
-            if (FindNode(root, data) != NIL)
-                fprintf(fileOut, "yes\n");
+            found_node = FindNode(root, data);
+            if (found_node != NIL && found_node != NULL)
+                fprintf(fileOut, "yes ");
             else
-                fprintf(fileOut, "no\n");
+                fprintf(fileOut, "no ");
             break;
         case 'q':
             DestroyTree(root);
@@ -302,4 +304,3 @@ bool LabSol(FILE* fileIn, FILE* fileOut) {
     DestroyTree(root);
     return true;
 }
-
