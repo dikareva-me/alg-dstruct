@@ -15,10 +15,14 @@ void TestFunc(const char* filenameIn, const char* filenameOut, const char* factR
 	FILE* fileOut = fopen(filenameOut, "r");
 	ASSERT_TRUE(fileOut);
 
-	FILE* result = fopen(factResult, "r");
+	FILE* result = fopen(factResult, "w");
 	ASSERT_TRUE(result);
 
 	ASSERT_TRUE(LabSol(fileIn, result));
+	fclose(result);
+
+	result = fopen(factResult, "r");
+	ASSERT_TRUE(result);
 
 	fgets(resultCorrect, MAX_COUNT, fileOut);
 	ASSERT_TRUE(resultCorrect);
