@@ -2,6 +2,7 @@
 #include "labh.h"
 #include <gtest/gtest.h>
 #include <string.h>
+#define _CRT_SECURE_NO_WARNINGS
 
 #define MAX_COUNT 100
 
@@ -36,25 +37,43 @@ void TestFunc(const char* filenameIn, const char* filenameOut, const char* factR
 	fclose(fileIn);
 }
 
-TEST(test, insert_3_nodes) {
+class FunctionalTest : public ::testing::Test {
+protected:
+	void SetUp() {
+		_CrtMemCheckpoint(&m_before);
+	}
+	void TearDown() {
+		_CrtMemCheckpoint(&m_after);
+		if (_CrtMemDifference(&m_diff, &m_before, &m_after)) {
+			_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+			_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+			_CrtMemDumpStatistics(&m_diff);
+			FAIL();
+		}
+	}
+private:
+	_CrtMemState m_before, m_after, m_diff;
+};
+
+TEST_F(FunctionalTest, insert_3_nodes) {
 	TestFunc("test_data/insert_3_nodes/input.txt",
 		"test_data/insert_3_nodes/output.txt", "test_data/insert_3_nodes/factres.txt");
 }
 
 
-TEST(test, tree_5_nodes) {
+TEST_F(FunctionalTest, tree_5_nodes) {
 	TestFunc("test_data/5_nodes/input.txt",
 		"test_data/5_nodes/output.txt", "test_data/5_nodes/factres.txt");
 }
 
 
-TEST(test, example_test) {
+TEST_F(FunctionalTest, example_test) {
 	TestFunc("test_data/example_test/input.txt",
 		"test_data/example_test/output.txt", "test_data/example_test/factres.txt");
 }
 
 
-TEST(test, del_nonexistent_node) {
+TEST_F(FunctionalTest, del_nonexistent_node) {
 	TestFunc("test_data/del_nonexistent_node/input.txt",
 		"test_data/del_nonexistent_node/output.txt", "test_data/del_nonexistent_node/factres.txt");
 }
