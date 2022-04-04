@@ -77,3 +77,12 @@ TEST_F(FunctionalTest, del_nonexistent_node) {
 	TestFunc("test_data/del_nonexistent_node/input.txt",
 		"test_data/del_nonexistent_node/output.txt", "test_data/del_nonexistent_node/factres.txt");
 }
+
+TEST_F(FunctionalTest, empty_tree) {
+	TestFunc("test_data/empty_tree/input.txt",
+		"test_data/empty_tree/output.txt", "test_data/empty_tree/factres.txt");
+}
+TEST_F(FunctionalTest, del_empty_tree) {
+	TestFunc("test_data/del_empty_tree/input.txt",
+		"test_data/del_empty_tree/output.txt", "test_data/del_empty_tree/factres.txt");
+}
