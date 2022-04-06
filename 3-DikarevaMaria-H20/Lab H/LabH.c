@@ -7,7 +7,6 @@
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 #pragma warning (disable:4996)
-#define SIZE_BUFFER 16
 
 tree_t sentinel = { NIL, NIL, NULL, BLACK, 0 };
 tree_t* FindNode(tree_t* root, int data) {
@@ -136,7 +135,7 @@ tree_t* Insert(tree_t* root, int data) {
 
     while (cur != NIL) {
         if (data == cur->data)
-            return cur;
+            return root;
         prev = cur;
         if (cur->data < data)
             cur = cur->right;
@@ -274,17 +273,23 @@ void DestroyTree(tree_t* node) {
 }
 
 bool LabSol(FILE* fileIn, FILE* fileOut) {
-    int data;
-    char func;
     tree_t* root = NIL;
+    tree_t* temp = NULL;
     tree_t* found_node = NULL;
-
+    char func = 0;
+    int data = 0;
     while (fscanf(fileIn, "%c", &func) >= 1) {
         if (func != 'q')
             fscanf(fileIn, "%i", &data);
         switch (func) {
         case 'a':
-            root = Insert(root, data);
+            temp = Insert(root, data);
+            if (temp == NULL) {
+                DestroyTree(root);
+                return 0;
+            }
+            else
+                root = temp;
             break;
         case 'r':
             root = Delete(root, data);
@@ -302,5 +307,5 @@ bool LabSol(FILE* fileIn, FILE* fileOut) {
         }
     }
     DestroyTree(root);
-    return true;
+    return 1;
 }
