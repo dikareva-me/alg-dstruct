@@ -134,8 +134,10 @@ tree_t* Insert(tree_t* root, int data) {
         return root;
 
     while (cur != NIL) {
-        if (data == cur->data)
+        if (data == cur->data) {
+            free(new_node);
             return root;
+        }
         prev = cur;
         if (cur->data < data)
             cur = cur->right;
