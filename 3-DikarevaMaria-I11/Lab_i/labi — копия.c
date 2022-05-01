@@ -394,6 +394,47 @@ tree_t* DeleteNode(tree_t* tree, int key) {
     return Merge(left, right);
 }
 
+void PrintTree(tree_t* tree, int offset) {
+    if (tree == NULL)
+        return;
+
+    if (tree->height == 0) {
+        if (offset > 0) {
+            for (int i = 0; i < offset - 2; i++)
+                printf(" ");
+            printf("->");
+        }
+        printf("[%2d", tree->keys[0]);
+
+        if (tree->full == true)
+            printf(", %2d", tree->keys[1]);
+        printf("]\n");
+    }
+    else {
+        PrintTree(tree->sons[0], offset + 4);
+        if (tree->full == false) {
+            if (offset > 0) {
+                for (int i = 0; i < offset - 2; i++)
+                    printf(" ");
+                printf("->");
+            }
+            printf("%2d\n", tree->keys[0]);
+            PrintTree(tree->sons[1], offset + 4);
+        }
+        else {
+            for (int i = 0; i < offset; i++)
+                printf(" ");
+            printf("%2d\n", tree->keys[0]);
+            PrintTree(tree->sons[1], offset + 4);
+            for (int i = 0; i < offset; i++)
+                printf(" ");
+            printf("%2d\n", tree->keys[1]);
+            PrintTree(tree->sons[2], offset + 4);
+        }
+    }
+    if (offset == 0)
+        fflush(stdout);
+}
 
 int main() {
     tree_t* tree = NULL;
