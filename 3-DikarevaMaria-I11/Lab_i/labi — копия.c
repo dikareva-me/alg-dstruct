@@ -394,6 +394,21 @@ tree_t* DeleteNode(tree_t* tree, int key) {
     return Merge(left, right);
 }
 
+
+/*
+New print looks like this. The arrow of the full node points at the first key.
+
+          ->[ 1,  2]
+    -> 2
+          ->[ 3,  4]
+ 4
+          ->[ 5,  6]
+    -> 6
+          ->[ 7,  8]
+       8
+          ->[ 9]
+
+          */
 void PrintTree(tree_t* tree, int offset) {
     if (tree == NULL)
         return;
@@ -411,7 +426,7 @@ void PrintTree(tree_t* tree, int offset) {
         printf("]\n");
     }
     else {
-        PrintTree(tree->sons[0], offset + 4);
+        PrintTree(tree->sons[0], offset + 6);
         if (tree->full == false) {
             if (offset > 0) {
                 for (int i = 0; i < offset - 2; i++)
@@ -419,22 +434,25 @@ void PrintTree(tree_t* tree, int offset) {
                 printf("->");
             }
             printf("%2d\n", tree->keys[0]);
-            PrintTree(tree->sons[1], offset + 4);
+            PrintTree(tree->sons[1], offset + 6);
         }
         else {
-            for (int i = 0; i < offset; i++)
+            for (int i = 0; i < offset - 2; i++)
                 printf(" ");
+            if (tree->parent != NULL)
+                printf("->");
             printf("%2d\n", tree->keys[0]);
-            PrintTree(tree->sons[1], offset + 4);
+            PrintTree(tree->sons[1], offset + 6);
             for (int i = 0; i < offset; i++)
                 printf(" ");
             printf("%2d\n", tree->keys[1]);
-            PrintTree(tree->sons[2], offset + 4);
+            PrintTree(tree->sons[2], offset + 6);
         }
     }
     if (offset == 0)
         fflush(stdout);
 }
+
 
 int main() {
     tree_t* tree = NULL;
@@ -469,13 +487,16 @@ int main() {
                 printf("no\n");
             break;
         }
+        case 'p': {
+            PrintTree(tree, 0);
+            break;
+        }
         case 'q':
             DestroyTree(tree);
             return 0;
 
         }
     }
-
     DestroyTree(tree);
     return 0;
 }
