@@ -7,21 +7,21 @@
 
 
 hashMap_t* initHashMap(int maxSize) {
-    hashMap_t* res = (hashMap_t*)malloc(sizeof(hashMap_t));
-    if (res) {
-        res->data = (mapData_t*)malloc(sizeof(mapData_t) * maxSize);
-        if (!res->data) {
-            free(res);
+    hashMap_t* map = (hashMap_t*)malloc(sizeof(hashMap_t));
+    if (map) {
+        map->data = (mapData_t*)malloc(sizeof(mapData_t) * maxSize);
+        if (!map->data) {
+            free(map);
             return NULL;
         }
         for (int i = 0; i < maxSize; i++) {
-            res->data[i].value = NULL;
-            res->data[i].state = HASH_FREE;
+            map->data[i].value = NULL;
+            map->data[i].state = HASH_FREE;
         }
-        res->maxSize = maxSize;
-        res->size = 0;
+        map->maxSize = maxSize;
+        map->size = 0;
     }
-    return res;
+    return map;
 }
 
 int H1func(const char* str, int maxSize) {
@@ -58,14 +58,14 @@ void deleteHashMap(hashMap_t* map) {
 int findIndex(const hashMap_t* map, const char* str) {
     int pos = H1func(str, map->maxSize);
     int step = H2func(str, map->maxSize);
-    const int initPos = pos;
+    const int init_pos = pos;
     if (map->data[pos].state == HASH_FREE)
         return map->maxSize;
 
     while (map->data[pos].state != HASH_FREE &&
         (!map->data[pos].value || strcmp(map->data[pos].value, str))) {
         pos = (pos + step) % map->maxSize;
-        if (pos == initPos || map->data[pos].state == HASH_FREE)
+        if (pos == init_pos || map->data[pos].state == HASH_FREE)
             return map->maxSize;
     }
     return pos;
@@ -84,7 +84,7 @@ void deleteData(hashMap_t* map, const char* str) {
     }
 }
 
-bool insertIRightPos(hashMap_t* map, const char* str, int r) {
+bool insertRightPos(hashMap_t* map, const char* str, int r) {
     int pos = H1func(str, map->maxSize);
     int step = H2func(str, map->maxSize);
     for (int i = 0; i < r; i++) {
@@ -118,7 +118,7 @@ bool brentHashInsert(hashMap_t* map, const char* str) {
         r++;
         pos = (pos + step) % map->maxSize;
         if (r > 2)
-            if (insertIRightPos(map, str, r))
+            if (insertRightPos(map, str, r))
                 return true;
     }
     char* copy = (char*)malloc((strlen(str) + 1) * sizeof(char));
