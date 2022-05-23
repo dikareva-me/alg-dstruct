@@ -1,7 +1,7 @@
 #ifndef __HEADER_H_
 #define __HEADER_H_
 
-#define HASH_SIZE_DEFAULT 904999
+#define HASH_SIZE_DEFAULT 4000037
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>

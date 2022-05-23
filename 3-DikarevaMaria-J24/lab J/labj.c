@@ -106,6 +106,8 @@ bool insertRightPos(hashMap_t* map, const char* str, int r) {
 bool brentHashInsert(hashMap_t* map, const char* str) {
     if (map->size == map->maxSize)
         return false;
+    if (findData(map, str))
+        return true;
 
     int pos = H1func(str, map->maxSize);
     int step = H2func(str, map->maxSize);
