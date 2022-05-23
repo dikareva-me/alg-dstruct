@@ -1,7 +1,3 @@
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "brenthash.h"
 #pragma warning (disable:4996)
 
@@ -133,12 +129,12 @@ bool brentHashInsert(hashMap_t* map, const char* str) {
 }
 
 
-int main() {
+bool LabSol(FILE* fileIn, FILE* fileOut) {
     hashMap_t* map = initHashMap(HASH_SIZE_DEFAULT);
 
     char func;
     char key[20];
-    while (scanf("%c %s\n", &func, key) > 0) {
+    while (fscanf(fileIn, "%c %s\n", &func, key) > 0) {
         switch (func) {
         case 'a': {
             brentHashInsert(map, key);
@@ -149,15 +145,15 @@ int main() {
             break;
         }
         case 'f': {
-            printf("%s\n", findData(map, key) ? "yes" : "no");
+            fprintf(fileOut, "%s ", findData(map, key) ? "yes" : "no");
             break;
         }
         default: {
             deleteHashMap(map);
-            return 0;
+            return 1;
         }
         }
     }
     deleteHashMap(map);
-    return 0;
+    return 1;
 }

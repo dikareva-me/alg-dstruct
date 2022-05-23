@@ -2,7 +2,7 @@ Debug
 *.sln
 *.vcxproj*
 .vs
-packages
-labJ_tests
+packages*
 labj — копия.cpp
 labj_wo_tests.c
+pch*
