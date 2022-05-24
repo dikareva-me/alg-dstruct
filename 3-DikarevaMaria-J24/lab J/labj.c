@@ -83,10 +83,10 @@ void deleteData(hashMap_t* map, const char* str) {
 bool insertRightPos(hashMap_t* map, const char* str, int r) {
     int pos = H1func(str, map->maxSize);
     int step = H2func(str, map->maxSize);
-    for (int i = 0; i < r; i++) {
+    for (int i = 0; i < r - 1; i++) {
         int posI = (pos + i * step) % map->maxSize;
         int c = H2func(map->data[posI].value, map->maxSize);
-        int k = r - i;
+        int k = r - i - 1;
         int posIK = (posI + k * c) % map->maxSize;
         if (map->data[posIK].state != HASH_FULL) {
             map->data[posIK] = map->data[posI];
@@ -115,7 +115,7 @@ bool brentHashInsert(hashMap_t* map, const char* str) {
     while (map->data[pos].state == HASH_FULL) {
         r++;
         pos = (pos + step) % map->maxSize;
-        if (r > 2)
+        if (r >= 2)
             if (insertRightPos(map, str, r))
                 return true;
     }
@@ -133,6 +133,8 @@ bool brentHashInsert(hashMap_t* map, const char* str) {
 
 bool LabSol(FILE* fileIn, FILE* fileOut) {
     hashMap_t* map = initHashMap(HASH_SIZE_DEFAULT);
+    if (map == NULL)
+        return false;
 
     char func;
     char key[20];
@@ -152,10 +154,10 @@ bool LabSol(FILE* fileIn, FILE* fileOut) {
         }
         default: {
             deleteHashMap(map);
-            return 1;
+            return true;
         }
         }
     }
     deleteHashMap(map);
-    return 1;
+    return true;
 }
